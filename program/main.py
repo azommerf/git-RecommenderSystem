@@ -16,12 +16,12 @@ def main():
     download_request = input("\nDo you want to download the Amazon data set (can take a while)? [y]/[n] ")
 
     # INSERT URL HERE
-    # url = "https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Musical_Instruments_v1_00.tsv.gz"
-    url = "http://ctdbase.org/reports/CTD_genes_pathways.tsv.gz" # This is just an example data base which is smaller to handle
+    url = "https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Musical_Instruments_v1_00.tsv.gz"
+    # url = "http://ctdbase.org/reports/CTD_genes_pathways.tsv.gz" # This is just an example data base which is smaller to handle
 
     filename = url.split('/')[-1]
     workingdir = os.path.dirname(os.path.realpath(__file__))
-    datadir = "data"
+    datadir = "data" # Directory where data is stored
     filepath = os.path.join(workingdir, datadir, filename)
     
     
@@ -58,7 +58,7 @@ def main():
             unzipped = open(filepath[0:-3], 'wb')
             unzipped.write(zipped_content)
             unzipped.close()
-            print("\n File decompressed successfully.")
+            print("\nFile decompressed successfully.")
 
             # Delete zipped file
             os.remove(filepath)
@@ -72,19 +72,31 @@ def main():
 
     else:
         print("\nData not downloaded.")
-        filepath = filepath[0:-3]
+        filepath = filepath[0:-3] # Takes out .gz from filepath
+        
+        # Check if data file exists already
+        exists = os.path.isfile(filepath)
+        if exists:
+            # Store configuration file values
+        else:
+            # Keep presets
+
+        
+        return filepath
     
 
     ###########################################
     # Create dataframe
 
-    print(filepath)
-    # df = pd.read_csv(filepath, sep='\t')
-    df = pd.read_table(filepath, delim_whitespace=True, error_bad_lines=False, header=0)
+    print("\nFile saved in the following location:\n{}".format(filepath))
 
-    df
-
-
+    # Create pandas dataframe
+    df = pd.read_csv(filepath, delimiter='\t', encoding="utf-8", error_bad_lines=False)
+    
+    # Write dataframe to excel
+    # df = df.applymap(lambda x: x.encode('unicode_escape').
+    #              decode('utf-8') if isinstance(x, str) else x)
+    # df.to_excel("data.xlsx")
 
 
 
