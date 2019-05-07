@@ -13,77 +13,86 @@ def main():
     #  Prepare the data set from Amazon
     # Choose category here: https://s3.amazonaws.com/amazon-reviews-pds/tsv/index.txt
         
-    download_request = input("\nDo you want to download the Amazon data set (can take a while)? [y]/[n] ")
 
     # INSERT URL HERE
-    url = "https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Musical_Instruments_v1_00.tsv.gz"
-    # url = "http://ctdbase.org/reports/CTD_genes_pathways.tsv.gz" # This is just an example data base which is smaller to handle
+    # url = "https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Musical_Instruments_v1_00.tsv.gz"
+    url = "http://ctdbase.org/reports/CTD_genes_pathways.tsv.gz" # This is just an example data base which is smaller to handle
 
     filename = url.split('/')[-1]
     workingdir = os.path.dirname(os.path.realpath(__file__))
     datadir = "data" # Directory where data is stored
     filepath = os.path.join(workingdir, datadir, filename)
     
+  
+    while True:
+        download_request = input("\nDo you want to prepare the following Amazon data set (can take a while if not downloaded): {}? [y]/[n] ".format(filename))
+        print(filepath)
     
-    if download_request == "y":
-        
-        def download_gz(url, filepath, filename):
-            print("\n{:^50}".format("...downloading the data..."))
-
-            # Retrieve data from URL
-            r = requests.get(url, stream=True)
-            total_length = r.headers.get('content-length')
+        if download_request == "y":
             
-            with open(filepath, 'wb') as f:
-                # Show download progress bar
-                if total_length is None:
-                    f.write(r.content)
+            def download_gz(url, filepath, filename):
+                
+                # Check if data file already exists
+                exists = os.path.isfile(filepath)
+                if exists: print("\nFile already downloaded and compressed.")
                 else:
-                    downloaded = 0
-                    total_length = int(total_length)
-                    for data in r.iter_content(chunk_size=max(int(total_length/1000), 1024*1024)):
-                        downloaded += len(data)
-                        f.write(data)
-                        done = int(50*downloaded/total_length)
-                        sys.stdout.write('\r[{}{}]'.format('█' * done, '.' * (50-done)))
-                        sys.stdout.flush()
+                    print("\nFile does not exist. Continue with download process.")
+                                    
+                    print("\n{:^50}".format("...downloading the data..."))
 
-            print("\nDownloaded "+filename+" successfully.")
-            
-            # Unzip file  
-            print("\n\nunzipping the file...")
-            zipped = gzip.GzipFile(filepath, 'rb')
-            zipped_content = zipped.read()
-            zipped.close()
-            unzipped = open(filepath[0:-3], 'wb')
-            unzipped.write(zipped_content)
-            unzipped.close()
-            print("\nFile decompressed successfully.")
+                    # Retrieve data from URL
+                    r = requests.get(url, stream=True)
+                    total_length = r.headers.get('content-length')
+                    
+                    with open(filepath, 'wb') as f:
+                        # Show download progress bar
+                        if total_length is None:
+                            f.write(r.content)
+                        else:
+                            downloaded = 0
+                            total_length = int(total_length)
+                            for data in r.iter_content(chunk_size=max(int(total_length/1000), 1024*1024)):
+                                downloaded += len(data)
+                                f.write(data)
+                                done = int(50*downloaded/total_length)
+                                sys.stdout.write('\r[{}{}]'.format('█' * done, '.' * (50-done)))
+                                sys.stdout.flush()
 
-            # Delete zipped file
-            os.remove(filepath)
-            filepath = filepath[0:-3]
-            print("\nCompressed file deleted successfully.")
+                    print("\nDownloaded "+filename+" successfully.")
+                
+                # Unzip file  
+                print("\n\nunzipping the file...")
+                zipped = gzip.GzipFile(filepath, 'rb')
+                zipped_content = zipped.read()
+                zipped.close()
+                unzipped = open(filepath[0:-3], 'wb')
+                unzipped.write(zipped_content)
+                unzipped.close()
+                print("\nFile decompressed successfully.")
 
-            return filepath
+                # Delete zipped file
+                os.remove(filepath) # delete compressed data
+                filepath = filepath[0:-3]
+                print("\nCompressed file deleted successfully.")
+                
+                return filepath
 
-        # Execute download
-        filepath = download_gz(url, filepath, filename)
+            # Execute download
+            filepath = download_gz(url, filepath, filename)
+            break
 
-    else:
-        print("\nData not downloaded.")
-        filepath = filepath[0:-3] # Takes out .gz from filepath
-        
-        # Check if data file exists already
-        exists = os.path.isfile(filepath)
-        if exists:
-            # Store configuration file values
         else:
-            # Keep presets
+            print("\nData not downloaded.")
+            
+            # Check if data file already exists
+            exists = os.path.isfile(filepath)
+            if exists:
+                print("\nFile exists. No need to download.")
+            else:
+                print("\nData file not found. Download the file to continue program.")       
 
+                                   
         
-        return filepath
-    
 
     ###########################################
     # Create dataframe
@@ -91,7 +100,9 @@ def main():
     print("\nFile saved in the following location:\n{}".format(filepath))
 
     # Create pandas dataframe
-    df = pd.read_csv(filepath, delimiter='\t', encoding="utf-8", error_bad_lines=False)
+
+    print("\n...creating dataframe...")
+    # df = pd.read_csv(filepath, delimiter='\t', encoding="utf-8", error_bad_lines=False)
     
     # Write dataframe to excel
     # df = df.applymap(lambda x: x.encode('unicode_escape').
