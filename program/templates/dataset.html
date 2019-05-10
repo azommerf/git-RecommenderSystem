@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Amazon Recommender</title>
+        <style type="text/css">
+            #main-header{
+                text-align:center;
+                background-color:black;
+                color:white;
+                padding:10px
+            }
+        </style>
+    </head>
+    <body>
+        <!--TITLE-->
+        <header id="main-header">
+                <h1>Amazon Recommender System</h1>
+                <p>By Alvaro Morales, Pascal Schenk and André Zommerfelds</p>
+        </header>
+        <h1>
+        <a href = "http://localhost:5000">Home</a>
+        <!-- <a href = "http://localhost:5000/dataset2">Data</a> -->
+        </h1>
+        
+        <!--INTRO TEXT-->
+        <p>
+            This little interface will show you how a simple recommender system
+            might work using k nearest neighbors. Let's start looking at a sample
+            product:
+        </p>
+        <p>
+            <a href = "https://www.amazon.com/dp/B003VWJ2K8" target="_blank">https://www.amazon.com/dp/B003VWJ2K8</a>
+        </p>
+        <p>
+            The last part of the link tells you the product identification (B003VWJ2K8).
+            You can always access products by typing in the browser "www.amazon.com/dp/"
+            and add this code after "dp/".
+            We are going to use these product IDs for our recommender system.
+        </p>
+        <p>
+            Let's start! Choose a data set below. This will download/prepare the data set so that we can use it.
+        </p>
+        <!--DATA SET SELECTION-->
+        <form action="/dataset1" method="POST">
+            <label>Select data set: {{ msg }}!</label>
+        </form>
+    </body>
+</html>

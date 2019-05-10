@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Amazon Recommender</title>
+        <style type="text/css">
+            #main-header{
+                text-align:center;
+                background-color:black;
+                color:white;
+                padding:10px
+            }
+        </style>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    </head>
+    <body>
+        
+
+        <!--TITLE-->
+        <header id="main-header">
+                <h1>Amazon Recommender System</h1>
+                <p>By Alvaro Morales, Pascal Schenk and André Zommerfelds</p>
+        </header>
+        <h1>
+            <a href = "http://localhost:5000">Home</a>
+        </h1>
+        
+        <!--INTRO TEXT-->
+        <p>
+            This little interface will show you how a simple recommender system
+            might work using k nearest neighbors. Let's start looking at a sample
+            product:
+        </p>
+        <p>
+            <a href = "https://www.amazon.com/dp/B003VWJ2K8" target="_blank">https://www.amazon.com/dp/B003VWJ2K8</a>
+        </p>
+        <p>
+            The last part of the link tells you the product identification (B003VWJ2K8).
+            You can always access products by typing in the browser "www.amazon.com/dp/"
+            and add this code after "dp/".
+            We are going to use these product IDs for our recommender system.
+        </p>
+        <p>
+            Let's start! Choose a data set below. This will download/prepare the data set so that we can use it.
+        </p>
+        <!--DATA SET SELECTION-->
+        <form action="/dataset1" method="POST">
+            <label>Select data set:</label>
+            <select name="_data_url">
+                <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Musical_Instruments_v1_00.tsv.gz">Musical Instruments</option>
+                <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Lawn_and_Garden_v1_00.tsv.gz">Gardening</option>
+            </select>
+            <input type="submit" value="Submit" onclick="$('#loading').show();">
+        </form>
+        <div id="loading" style="display:none;"><img src="loading.gif" alt="" />Loading!</div>
+    </body>
+</html>
