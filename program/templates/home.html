@@ -43,15 +43,9 @@
         <p>
             Let's start! Choose a data set below. This will download/prepare the data set so that we can use it.
         </p>
-        <!--DATA SET SELECTION-->
-        <form action="/dataset1" method="POST">
-            <label>Select data set:</label>
-            <select name="_data_url">
-                <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Musical_Instruments_v1_00.tsv.gz">Musical Instruments</option>
-                <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Lawn_and_Garden_v1_00.tsv.gz">Gardening</option>
-            </select>
-            <input type="submit" value="Submit" onclick="$('#loading').show();">
+        <!--GOT TO COCKPIT-->
+        <form action="/cockpit">
+            <input type="submit" value="Enter the cockpit">
         </form>
-        <div id="loading" style="display:none;"><img src="loading.gif" alt="" />Loading!</div>
     </body>
 </html>

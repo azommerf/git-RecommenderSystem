@@ -9,6 +9,10 @@ app = Flask(__name__)
 def home():
     return render_template('home.html')
 
+@app.route("/cockpit")
+def cockpit():
+    return render_template('cockpit.html')
+
 @app.route("/dataset2")
 def dataset(_success_msg):
         _success_msg = _success_msg
