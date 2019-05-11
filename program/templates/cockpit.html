@@ -22,16 +22,27 @@
                 <p>By Alvaro Morales, Pascal Schenk and André Zommerfelds</p>
         </header>
         <h1>
-            <a href = "http://localhost:5000">Home</a> / 
-            <a href = "http://localhost:5000/cockpit">Cockpit</a>
+            <a href = {{ url_for('home') }}>Home</a> / 
+            <a href = {{ url_for('cockpit') }}>Cockpit</a>
         </h1>
         
         <!--INTRO TEXT-->
         <p>
-            Go through each step to get an 
+            Go through each step to set up the system.
         </p>
         <!--DATA SET SELECTION-->
-        <form action="/dataset1" method="POST">
+        <form action="/download1" method="POST">
+            <label>Download data set:</label>
+            <select name="_data_url">
+                <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Musical_Instruments_v1_00.tsv.gz">Musical Instruments</option>
+                <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Lawn_and_Garden_v1_00.tsv.gz">Gardening</option>
+            </select>
+            <input type="submit" value="Submit" onclick="$('#loading').show();">
+        </form>
+        <div id="loading" style="display:none;"><img src="static/loadingimage.gif" alt="" />Loading!</div>
+        
+        <!--DATAFRAME-->
+        <form action="/download1" method="POST">
             <label>Select data set:</label>
             <select name="_data_url">
                 <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Musical_Instruments_v1_00.tsv.gz">Musical Instruments</option>

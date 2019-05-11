@@ -18,7 +18,7 @@ def download_main(url):
 
     filename = url.split('/')[-1]
     workingdir = os.path.abspath('')
-    datadir = "data" # Directory where data is stored
+    datadir = "program/data" # Directory where data is stored
     filepath_tsvgz = os.path.join(workingdir, datadir, filename)
     filepath_tsv = filepath_tsvgz[0:-3]
 

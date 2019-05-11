@@ -1,4 +1,6 @@
-from program import main
+# from flask import Flask, request, render_template
+from program import server_copy
+# from program import download
 
 if __name__ == '__main__':
-    main.main()
+    server_copy.main()
