@@ -1,4 +1,4 @@
-from program import server_copy
+from program import app_server
 
 if __name__ == '__main__':
     app_server.main()
