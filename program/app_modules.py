@@ -7,7 +7,7 @@ import pandas as pd # For handling dataframe
 import numpy as np # For sparse grid
 
 
-def download_main(url):
+def data_download(url):
 
     #################################################################################
     #  Prepare the data set from Amazon
@@ -112,3 +112,22 @@ def download_main(url):
         msg = "Something went wrong. Please try again or send a message to on of our hosts: andre.zommerfelds@unil.ch"
         return msg
                 
+def data_frame(url):
+    try:
+        filename = url.split('/')[-1]
+        workingdir = os.path.abspath('')
+        datadir = "program/data" # Directory where data is stored
+        filepath_tsvgz = os.path.join(workingdir, datadir, filename)
+        filepath_tsv = filepath_tsvgz[0:-3]
+
+        # Create pandas dataframe
+        print()
+        print("\n...creating dataframe...")
+        df = pd.read_csv(filepath_tsv, delimiter='\t', encoding="utf-8", error_bad_lines=False)
+
+        msg = "Dataframe created successfully."
+
+    except:
+        msg = "Encountered an error while creating dataframe."
+
+    return df, msg

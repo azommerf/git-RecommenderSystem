@@ -28,10 +28,11 @@
         
         <!--INTRO TEXT-->
         <p>
-            Go through each step to set up the system.
+            Go through each step to set up the system. (Remark: the download process
+            might take a while (>15 min). Your terminal will display the exact download status.)
         </p>
         <!--DATA SET SELECTION-->
-        <form action="/download1" method="POST">
+        <form action="/cockpit/download" method="POST">
             <label>Download data set:</label>
             <select name="_data_url">
                 <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Musical_Instruments_v1_00.tsv.gz">Musical Instruments</option>
@@ -42,8 +43,8 @@
         <div id="loading" style="display:none;"><img src="static/loadingimage.gif" alt="" />Loading!</div>
         
         <!--DATAFRAME-->
-        <form action="/download1" method="POST">
-            <label>Select data set:</label>
+        <form action="/cockpit/dataframe" method="POST">
+            <label>Create dataframe:</label>
             <select name="_data_url">
                 <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Musical_Instruments_v1_00.tsv.gz">Musical Instruments</option>
                 <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Lawn_and_Garden_v1_00.tsv.gz">Gardening</option>
