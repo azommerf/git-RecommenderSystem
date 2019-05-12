@@ -26,16 +26,13 @@
             <a href = {{ url_for('cockpit') }}>Cockpit</a>
         </h1>
         
-        <!--INTRO TEXT-->
-        <p>
-            Go through each step to set up the system.
-        </p>
         <!--DATA SET SELECTION-->
         <form action="/dockpit/dataframe" method="POST">
-            <label>{{ msg }}!</label>
+            <label>{{ msg }}</label>
         </form>
+        {{data | safe}}
         <form action="/cockpit">
-            <input type="submit" value="Go back to cockpit.">
+            <input type="submit" value="Continue with step 3">
         </form>
     </body>
 </html>

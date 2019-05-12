@@ -28,13 +28,18 @@
         
         <!--INTRO TEXT-->
         <p>
-            Go through each step to set up the system. (Remark: the download process
-            might take a while (>15 min). Your terminal will display the exact download status.)
+            Go through each step to set up the system.
+        </p>
+        <p>
+            <b>Important notes:</b><br>
+            Select <i>only one data set / dataframe at a time </i>.
+            The download process might take a while (>15 min). 
+            Your terminal will display the exact download status.
         </p>
         <!--DATA SET SELECTION-->
         <div style="disyplay:block; ">
             <form action="/cockpit/download" method="POST">
-                <label>Download data set:</label>
+                <label>1.) Download data set:</label>
                 <select name="_data_url">
                     <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Musical_Instruments_v1_00.tsv.gz">Musical Instruments</option>
                     <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Lawn_and_Garden_v1_00.tsv.gz">Gardening</option>
@@ -45,16 +50,23 @@
         </div>
 
         <!--DATAFRAME-->
+        <form action="/cockpit/dataframe" method="POST">
+            <label>2.) Create dataframe:</label>
+            <select name="_data_url">
+                <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Musical_Instruments_v1_00.tsv.gz">Musical Instruments</option>
+                <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Lawn_and_Garden_v1_00.tsv.gz">Gardening</option>
+            </select>
+            <input type="submit" value="Submit" onclick="$('#loading2').show();">
+        </form>
+        <div id="loading2" style="display:none;"><img src="static/loadingimage.gif" alt="" />...creating dataframe...</div>
+        <!--KNN MODEL FIT-->
         <div style="disyplay:block; ">
-            <form action="/cockpit/dataframe" method="POST">
-                <label>Create dataframe:</label>
-                <select name="_data_url">
-                    <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Musical_Instruments_v1_00.tsv.gz">Musical Instruments</option>
-                    <option value="https://s3.amazonaws.com/amazon-reviews-pds/tsv/amazon_reviews_us_Lawn_and_Garden_v1_00.tsv.gz">Gardening</option>
-                </select>
-                <input type="submit" value="Submit" onclick="$('#loading2').show();">
-            </form>
-            <div id="loading2" style="display:none;"><img src="static/loadingimage.gif" alt="" />...creating dataframe...</div>
-        </div>
+                <form action="/cockpit/KNN" method="POST">
+                    <label>3.) Fit the KNN model:</label>
+                    <input type="submit" value="Fit KNN" onclick="$('#loading3').show();">
+                </form>
+                <div id="loading3" style="display:none;"><img src="static/loadingimage.gif" alt="" />...fitting the model...</div>
+            </div>
+
     </body>
 </html>
