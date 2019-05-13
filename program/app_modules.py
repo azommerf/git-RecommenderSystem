@@ -219,3 +219,25 @@ def data_reset(filetype):
                 os.remove(os.path.join(data_dir,file))
         return msg
     else: return msg
+
+def data_recommender(prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_csr):
+    # Now we look at an example product "prod1"
+    prod1 = prod_id
+    prod1_index = prodUnique_indexed[prod1]
+
+    # From the sparse matrix we extract all rows that are related to prod1.
+    # E.g. we look at all rows where a customer at least (!) reviewed B003VWJ2K8 
+    prod1_csr = df_csr[prod1_index]
+
+    amazon_url = "https://www.amazon.com/dp/"
+
+    NN_model = NearestNeighbors()
+    NN_model.fit(df_csr)
+    KNN = NN_model.kneighbors(prod1_csr, 10)
+
+    for i in KNN[1][0]:
+        prod_id = prodUnique_reverseIndexed[i]
+        print(amazon_url+prod_id)
+
+    msg = "\nMade 10 suggestions based on the chosen product."
+    

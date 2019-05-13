@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Amazon Recommender</title>
+        <style type="text/css">
+            #main-header{
+                text-align:center;
+                background-color:black;
+                color:white;
+                padding:10px
+            }
+        </style>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    </head>
+    <body>
+        
+
+        <!--TITLE-->
+        <header id="main-header">
+                <h1>Amazon Recommender System</h1>
+                <p>By Alvaro Morales, Pascal Schenk and André Zommerfelds</p>
+        </header>
+        <h1>
+            <a href = {{ url_for('home') }}>Home</a> / 
+            <a href = {{ url_for('cockpit') }}>Cockpit</a> / 
+            <a href = {{ url_for('recommender') }}>Recommender System</a>
+        </h1>
+
+        <!--INTRO TEXT-->
+        <p>
+            Now you can choose a product from the selected data set. 
+            From the following drop-down menu, click on the data set that you have chosen
+            and select the desired product from Amazon. When you are in the product page,
+            look at the URL and copy the product code that looks like this: "B00ESJDQ4Q".
+        </p>
+
+        <!--SELECT PRODUCT IN AMAZON WEBPAGE-->
+        <form action="/recommender/1" method="POST">
+            <label>Select category:</label>
+            <select name="_amazon_url">
+                <option value="https://www.amazon.com/s/ref=lp_51575011_ex_n_1?rh=n%3A11091801&bbn=11091801&ie=UTF8&qid=1557755005">Musical Instruments</option>
+                <option value="https://www.amazon.com/s/ref=lp_3742441_ex_n_1?rh=n%3A2972638011&bbn=2972638011&ie=UTF8&qid=1557755163">Gardening</option>
+            </select>
+            <input type="submit" value="Go to Amazon">
+        </form>
+
+        <br>
+
+        <!--INPUT SELECTED PRODUCT-->
+        <form action="/recommender/2" method="POST">
+            Product ID: <input type="text" name="_product_id", placeholder="B003VWJ2K8">
+            <input type="submit" value="Submit">
+        </form>
+        

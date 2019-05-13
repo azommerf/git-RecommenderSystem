@@ -1,10 +1,11 @@
 import os
 from flask import Flask, request, render_template, url_for, session
 import subprocess
-from program.app_modules import data_download, data_frame, data_KNN, data_reset
+from program.app_modules import data_download, data_frame, data_KNN, data_reset, data_recommender
 import random, threading, webbrowser
 import pandas as pd
 import pickle
+import webbrowser
 
 def main():
     app = Flask(__name__)
@@ -74,7 +75,31 @@ def main():
         msg = data_reset(filetype="all")
         return render_template('reset.html', msg=msg)
         
+    @app.route("/recommender")    
+    def recommender():
+        return render_template('recommender1.html')
+
+    @app.route("/recommender/1", methods=['POST'])    
+    def goAmazon():
+        _amazon_url = request.form["_amazon_url"]
+        webbrowser.open_new_tab(_amazon_url)
+        return recommender()
+
+    @app.route("/recommender/2", methods=['POST'])
+    def recommender2():
+        prod_id = request.form["_product_id"]
+
+        # Load pickled variables needed
+        pickle_in = open("./program/data/prodUnique_indexed.pickle","rb")
+        prodUnique_indexed = pickle.load(pickle_in)
+        pickle_in = open("./program/data/prodUnique_reverseIndexed.pickle","rb")
+        prodUnique_reverseIndexed = pickle.load(pickle_in)
+        df_csr = pd.read_csv("./program/data/df_csr.csv")
+
+        print("You chose the following product: {}".format(prod_id))
+        msg = data_recommender(prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_csr)
+
+        return recommender()
 
     app.run(port=port, debug=False)
-    
     return app
