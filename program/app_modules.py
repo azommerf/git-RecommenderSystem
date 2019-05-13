@@ -5,6 +5,9 @@ import gzip # For unzipping the data set
 import shutil # For unzipping
 import pandas as pd # For handling dataframe
 import numpy as np # For sparse grid
+from scipy.sparse import csr_matrix # Sparse matrix
+from sklearn.neighbors import NearestNeighbors
+
 
 
 def data_download(url):
@@ -180,12 +183,39 @@ def data_KNN(df):
 
         msg = "\nFitted the KNN model successfully"
 
-        return prodNo, custNo,\
-            prodUnique_indexed, custUnique_indexed,\
-            prodUnique_reverseIndexed, custUnique_reverseIndexed,\
-            custIndex, prodIndex,\
-            df_custIndex, df_prodIndex, df_indexed, df_csr, msg
+        return custNo, prodUnique_indexed, prodUnique_reverseIndexed, df_csr, msg
 
     except: 
         msg = "\nError during KNN model fitting encountered"
         print(msg)
+
+
+def data_reset(filetype):
+    data_dir = "./program/data/"
+    data_dir_ = os.listdir(data_dir)
+    msg = "We cleaned the garbage for you."
+    if filetype == "all":
+        for file in data_dir_:
+            if file.endswith(".pickle"):
+                os.remove(os.path.join(data_dir,file))
+            elif file.endswith(".csv"):
+                os.remove(os.path.join(data_dir,file))
+            elif file.endswith(".tsv"):
+                os.remove(os.path.join(data_dir,file))
+        return msg
+    elif filetype == "pickle":
+        for file in data_dir_:
+            if file.endswith(".pickle"):
+                os.remove(os.path.join(data_dir,file))
+        return msg
+    elif filetype == "csv":
+        for file in data_dir_:
+            if file.endswith(".csv"):
+                os.remove(os.path.join(data_dir,file))
+        return msg
+    elif filetype == "tsv":
+        for file in data_dir_:
+            if file.endswith(".tsv"):
+                os.remove(os.path.join(data_dir,file))
+        return msg
+    else: return msg

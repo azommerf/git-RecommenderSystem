@@ -1,9 +1,10 @@
 import os
 from flask import Flask, request, render_template, url_for, session
 import subprocess
-from program.app_modules import data_download, data_frame, data_KNN
+from program.app_modules import data_download, data_frame, data_KNN, data_reset
 import random, threading, webbrowser
 import pandas as pd
+import pickle
 
 def main():
     app = Flask(__name__)
@@ -39,7 +40,7 @@ def main():
         df, msg = data_frame(_data_url)
         # session['df'] = df
         print(df.head())
-        print("Saving dataframe as csv.\Printing dataframe to HTML.")
+        print("Saving dataframe as csv. Printing dataframe to HTML.")
         df.to_csv("program/data/df.csv")
         print("CSV file created.")
         return render_template('dataframe.html', msg=msg, data=df.head().to_html())
@@ -49,14 +50,30 @@ def main():
         print("\nReading the dataframe as csv.")
         df = pd.read_csv("program/data/df.csv")
         print(df.head())
-        # prodNo, custNo,\
-        # prodUnique_indexed, custUnique_indexed,\
-        # prodUnique_reverseIndexed, custUnique_reverseIndexed,\
-        # custIndex, prodIndex,\
-        # df_custIndex, df_prodIndex, df_indexed, df_csr, msg = data_KNN(df)
-        msg = "KNN model fitted?"
+        custNo, prodUnique_indexed, prodUnique_reverseIndexed, df_csr, msg = data_KNN(df)
+
+        # Pickle variables for later use
+        pickle_out = open("./program/data/custNo.pickle", "wb")
+        pickle.dump(custNo, pickle_out)
+        pickle_out.close()
+
+        pickle_out = open("./program/data/prodUnique_indexed.pickle", "wb")
+        pickle.dump(prodUnique_indexed, pickle_out)
+        pickle_out.close()
+
+        pickle_out = open("./program/data/prodUnique_reverseIndexed.pickle", "wb")
+        pickle.dump(prodUnique_reverseIndexed, pickle_out)
+        pickle_out.close()
+
+        df.to_csv("program/data/df_csr.csv")
+
         return render_template('KNN.html', msg=msg)
 
+    @app.route("/cockpit/reset", methods=['POST'])    
+    def reset():
+        msg = data_reset(filetype="all")
+        return render_template('reset.html', msg=msg)
+        
 
     app.run(port=port, debug=False)
     
