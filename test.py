@@ -1,40 +1,16 @@
 import pickle
-from program.app_modules import data_KNN, data_frame, data_reset
+from program.app_modules import data_KNN, data_frame, data_reset, data_recommender
 import pandas as pd
-
+import numpy as np
+from scipy.sparse import csr_matrix, save_npz, load_npz # Sparse matrix
+from sklearn.neighbors import NearestNeighbors
 import os
 
-# data_dir = "./program/data/"
-# data_dir_ = os.listdir(data_dir)
-# for file in data_dir_:
-#     if file.endswith(".pickle"):
-#         os.remove(os.path.join(data_dir,file))
 
 
+recommendations = np.array([])
 
-# def data_reset(filetype):
-#     data_dir = "./program/data/"
-#     data_dir_ = os.listdir(data_dir)
-#     if filetype == "all":
-#         for file in data_dir_:
-#             if file.endswith(".pickle"):
-#                 os.remove(os.path.join(data_dir,file))
-#             elif file.endswith(".csv"):
-#                 os.remove(os.path.join(data_dir,file))
-#             elif file.endswith(".tsv"):
-#                 os.remove(os.path.join(data_dir,file))
-#     elif filetype == "pickle":
-#         for file in data_dir_:
-#             if file.endswith(".pickle"):
-#                 os.remove(os.path.join(data_dir,file))
-#     elif filetype == "csv":
-#         for file in data_dir_:
-#             if file.endswith(".csv"):
-#                 os.remove(os.path.join(data_dir,file))
-#     elif filetype == "tsv":
-#         for file in data_dir_:
-#             if file.endswith(".tsv"):
-#                 os.remove(os.path.join(data_dir,file))
-#     else: print("\nAll necessery files deleted.")
+for i in range(10):
+    recommendations = np.append(recommendations, i)
 
-data_reset("all")
+print(recommendations)

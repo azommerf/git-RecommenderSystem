@@ -5,8 +5,9 @@ import gzip # For unzipping the data set
 import shutil # For unzipping
 import pandas as pd # For handling dataframe
 import numpy as np # For sparse grid
-from scipy.sparse import csr_matrix # Sparse matrix
+from scipy.sparse import csr_matrix, save_npz, load_npz # Sparse matrix
 from sklearn.neighbors import NearestNeighbors
+import pickle
 
 
 
@@ -98,7 +99,7 @@ def data_download(url):
                 break
 
         else:
-            print("\nChecking if data is downloaded.")
+            print("\n...checking if data is downloaded...")
 
             # Check if decompressed data file already exists
             exists = os.path.isfile(filepath_tsv)
@@ -179,15 +180,28 @@ def data_KNN(df):
         # csr_matrix((data, (row_ind, col_ind)), [shape=(M, N)])
         # where data, row_ind and col_ind satisfy the relationship a[row_ind[k], col_ind[k]] = data[k].
 
+        print("...creating sparse matrix...")
         df_csr = csr_matrix((df_indexed["star_rating"], (prodIndex, custIndex)), shape=(prodNo, custNo))
 
-        msg = "\nFitted the KNN model successfully"
+        print("...storing number of customers...")
+        with open("./program/data/custNo.pickle", "wb") as pkl:
+            pickle.dump(custNo, pkl, protocol=pickle.HIGHEST_PROTOCOL)
+        print("...storing indices...")
+        with open("./program/data/prodUnique_indexed.pickle", "wb") as pkl:
+            pickle.dump(prodUnique_indexed, pkl, protocol=pickle.HIGHEST_PROTOCOL)
+        with open("./program/data/prodUnique_reverseIndexed.pickle", "wb") as pkl:
+            pickle.dump(prodUnique_reverseIndexed, pkl, protocol=pickle.HIGHEST_PROTOCOL)
+        print("...storing sparse matrix...")
+        save_npz("./program/data/df_csr.npz", df_csr)
 
-        return custNo, prodUnique_indexed, prodUnique_reverseIndexed, df_csr, msg
+        msg = "\nFitted the KNN model successfully."
+
+        return msg
 
     except: 
-        msg = "\nError during KNN model fitting encountered"
-        print(msg)
+
+        msg = "\nError during KNN model fitting encountered."
+        return msg
 
 
 def data_reset(filetype):
@@ -201,6 +215,8 @@ def data_reset(filetype):
             elif file.endswith(".csv"):
                 os.remove(os.path.join(data_dir,file))
             elif file.endswith(".tsv"):
+                os.remove(os.path.join(data_dir,file))
+            elif file.endswith(".npz"):
                 os.remove(os.path.join(data_dir,file))
         return msg
     elif filetype == "pickle":
@@ -218,26 +234,44 @@ def data_reset(filetype):
             if file.endswith(".tsv"):
                 os.remove(os.path.join(data_dir,file))
         return msg
+    elif filetype == "npz":
+        for file in data_dir_:
+            if file.endswith(".npz"):
+                os.remove(os.path.join(data_dir,file))
+        return msg
     else: return msg
 
 def data_recommender(prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_csr):
-    # Now we look at an example product "prod1"
-    prod1 = prod_id
-    prod1_index = prodUnique_indexed[prod1]
+    try:
+        # Now we look at an example product "prod"
 
-    # From the sparse matrix we extract all rows that are related to prod1.
-    # E.g. we look at all rows where a customer at least (!) reviewed B003VWJ2K8 
-    prod1_csr = df_csr[prod1_index]
+        prod_index = prodUnique_indexed[prod_id]
+        print("\nUnique index for {}: {}".format(prod_id,prod_index))
 
-    amazon_url = "https://www.amazon.com/dp/"
+        # From the sparse matrix we extract all rows that are related to prod1.
+        # E.g. we look at all rows where a customer at least (!) reviewed B003VWJ2K8 
+        prod_csr = df_csr[prod_index]
 
-    NN_model = NearestNeighbors()
-    NN_model.fit(df_csr)
-    KNN = NN_model.kneighbors(prod1_csr, 10)
+        amazon_url = "https://www.amazon.com/dp/"
 
-    for i in KNN[1][0]:
-        prod_id = prodUnique_reverseIndexed[i]
-        print(amazon_url+prod_id)
+        no_recommendations = 6
+        NN_model = NearestNeighbors()
+        NN_model.fit(df_csr)
+        KNN = NN_model.kneighbors(prod_csr, no_recommendations) # Set number of suggestions
 
-    msg = "\nMade 10 suggestions based on the chosen product."
-    
+        recommendations = np.array([])
+        for i in KNN[1][0]:
+            prod_id = prodUnique_reverseIndexed[i]
+            prod_url = amazon_url+prod_id
+            print(prod_url)
+            recommendations = np.append(recommendations, prod_url)
+
+        msg = "These are the top {} recommendations based on product {}".format(no_recommendations-1, prod_id)
+        print("\n"+msg)
+        return recommendations, msg
+    except:
+        recommendations = np.array(["" "" "" "" "" ""])
+        msg = "\nUnfortunately this product ID was not found in the data base. Please search for another product ID."
+        print(msg)
+        return recommendations, msg
+        

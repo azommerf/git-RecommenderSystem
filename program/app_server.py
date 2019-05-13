@@ -6,6 +6,7 @@ import random, threading, webbrowser
 import pandas as pd
 import pickle
 import webbrowser
+from scipy.sparse import load_npz
 
 def main():
     app = Flask(__name__)
@@ -41,32 +42,17 @@ def main():
         df, msg = data_frame(_data_url)
         # session['df'] = df
         print(df.head())
-        print("Saving dataframe as csv. Printing dataframe to HTML.")
-        df.to_csv("program/data/df.csv")
+        print("...saving dataframe as csv...\n...printing dataframe to HTML...")
+        df.to_csv("program/data/df.csv", sep=',', index=False, encoding="utf-8")
         print("CSV file created.")
         return render_template('dataframe.html', msg=msg, data=df.head().to_html())
 
     @app.route("/cockpit/KNN", methods=['POST'])
     def fit_KNN():
-        print("\nReading the dataframe as csv.")
-        df = pd.read_csv("program/data/df.csv")
+        print("\n...Reading the dataframe as csv...")
+        df = pd.read_csv("program/data/df.csv", sep=',', encoding="utf-8")
         print(df.head())
-        custNo, prodUnique_indexed, prodUnique_reverseIndexed, df_csr, msg = data_KNN(df)
-
-        # Pickle variables for later use
-        pickle_out = open("./program/data/custNo.pickle", "wb")
-        pickle.dump(custNo, pickle_out)
-        pickle_out.close()
-
-        pickle_out = open("./program/data/prodUnique_indexed.pickle", "wb")
-        pickle.dump(prodUnique_indexed, pickle_out)
-        pickle_out.close()
-
-        pickle_out = open("./program/data/prodUnique_reverseIndexed.pickle", "wb")
-        pickle.dump(prodUnique_reverseIndexed, pickle_out)
-        pickle_out.close()
-
-        df.to_csv("program/data/df_csr.csv")
+        msg = data_KNN(df)
 
         return render_template('KNN.html', msg=msg)
 
@@ -86,20 +72,23 @@ def main():
         return recommender()
 
     @app.route("/recommender/2", methods=['POST'])
-    def recommender2():
+    def recommend_prod():
         prod_id = request.form["_product_id"]
-
         # Load pickled variables needed
-        pickle_in = open("./program/data/prodUnique_indexed.pickle","rb")
-        prodUnique_indexed = pickle.load(pickle_in)
-        pickle_in = open("./program/data/prodUnique_reverseIndexed.pickle","rb")
-        prodUnique_reverseIndexed = pickle.load(pickle_in)
-        df_csr = pd.read_csv("./program/data/df_csr.csv")
+        print("\n...Loading pickled files...")
+        with open("./program/data/prodUnique_indexed.pickle","rb") as pkl:
+            prodUnique_indexed = pickle.load(pkl)
+        
+        with open("./program/data/prodUnique_reverseIndexed.pickle","rb") as pkl:
+            prodUnique_reverseIndexed = pickle.load(pkl)
+
+        print("\n...loading csv file...")
+        df_csr = load_npz("./program/data/df_csr.npz")
 
         print("You chose the following product: {}".format(prod_id))
-        msg = data_recommender(prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_csr)
-
-        return recommender()
+        print("\n...making recommendations...")
+        recommendations, msg = data_recommender(prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_csr)
+        return render_template('recommender2.html', recommendations=recommendations, msg=msg)
 
     app.run(port=port, debug=False)
     return app
