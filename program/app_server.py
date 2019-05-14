@@ -1,7 +1,7 @@
 import os
 from flask import Flask, request, render_template, url_for, session
 import subprocess
-from program.app_modules import data_download, data_frame, data_KNN, data_reset, data_recommender
+import program.app_modules as rs # rs stands for recommender system
 import random, threading, webbrowser
 import pandas as pd
 import pickle
@@ -31,7 +31,7 @@ def main():
     def choose_dataset():
         _data_url = request.form["_data_url"] # Save dataset
         print("\nDownload process started for the following file: "+_data_url)
-        _success_msg = data_download(_data_url)
+        _success_msg = rs.data_download(_data_url)
         print(_success_msg)
         return render_template('dataset.html', msg=_success_msg)
 
@@ -39,7 +39,7 @@ def main():
     def create_dataframe():
         _data_url = request.form["_data_url"] # Save dataset
         print("\nCreating dataframe from the following file: "+_data_url.split('/')[-4])
-        df, msg = data_frame(_data_url)
+        df, msg = rs.data_frame(_data_url)
         # session['df'] = df
         print(df.head())
         print("...saving dataframe as csv...\n...printing dataframe to HTML...")
@@ -52,13 +52,13 @@ def main():
         print("\n...Reading the dataframe as csv...")
         df = pd.read_csv("program/data/df.csv", sep=',', encoding="utf-8")
         print(df.head())
-        msg = data_KNN(df)
+        msg = rs.data_KNN(df)
 
         return render_template('KNN.html', msg=msg)
 
     @app.route("/cockpit/reset", methods=['POST'])    
     def reset():
-        msg = data_reset(filetype="all")
+        msg = rs.data_reset(filetype="all")
         return render_template('reset.html', msg=msg)
         
     @app.route("/recommender")    
@@ -74,6 +74,9 @@ def main():
     @app.route("/recommender/2", methods=['POST'])
     def recommend_prod():
         prod_id = request.form["_product_id"]
+        metric = request.form["_metric"]
+        print("Metric: {}".format(metric))
+
         # Load pickled variables needed
         print("\n...Loading pickled files...")
         with open("./program/data/prodUnique_indexed.pickle","rb") as pkl:
@@ -87,8 +90,9 @@ def main():
 
         print("You chose the following product: {}".format(prod_id))
         print("\n...making recommendations...")
-        recommendations, msg = data_recommender(prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_csr)
-        return render_template('recommender2.html', recommendations=recommendations, msg=msg)
+        recommendations, msg = rs.data_recommender(metric, prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_csr)
+        
+        return render_template('recommender2.html', recommendations=recommendations, msg=msg, metric=metric)
 
     app.run(port=port, debug=False)
     return app

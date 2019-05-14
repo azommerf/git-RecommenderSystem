@@ -42,12 +42,19 @@
             </select>
             <input type="submit" value="Go to Amazon">
         </form>
-
-        <br>
-
         <!--INPUT SELECTED PRODUCT-->
+        <br>
+        <p>
+            Now it will get more interesting. You can tweak the k nearest
+            neighbors model. Try out different parameters and see the recommendations. 
+            Remember: you can always go back to the cockpit and restart with another data set.
+        </p>
         <form action="/recommender/2" method="POST">
             Product ID: <input type="text" name="_product_id", placeholder="B003VWJ2K8">
+            <select name="_metric">
+                <option value="euclidean">Euclidean</option>
+                <option value="cosine">Cosine</option>
+            </select>
             <input type="submit" value="Submit">
         </form>
     </body>

@@ -241,7 +241,7 @@ def data_reset(filetype):
         return msg
     else: return msg
 
-def data_recommender(prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_csr):
+def data_recommender(metric, prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_csr):
     try:
         # Now we look at an example product "prod"
 
@@ -255,7 +255,7 @@ def data_recommender(prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_
         amazon_url = "https://www.amazon.com/dp/"
 
         no_recommendations = 6
-        NN_model = NearestNeighbors()
+        NN_model = NearestNeighbors(metric=metric)
         NN_model.fit(df_csr)
         KNN = NN_model.kneighbors(prod_csr, no_recommendations) # Set number of suggestions
 
@@ -266,7 +266,7 @@ def data_recommender(prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_
             print(prod_url)
             recommendations = np.append(recommendations, prod_url)
 
-        msg = "These are the top {} recommendations based on product {}".format(no_recommendations-1, prod_id)
+        msg = "These are the top {} recommendations based on product {} and {} distance metric.".format(no_recommendations-1, prod_id, metric)
         print("\n"+msg)
         return recommendations, msg
     except:
