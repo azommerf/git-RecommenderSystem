@@ -61,8 +61,7 @@
             <input type="submit" value="Submit" onclick="$('#loading2').show();">
         </form>
         <div id="loading2" style="display:none;"><img src="static/loadingimage.gif" alt="" />...creating dataframe...</div>
-        
-        
+                
         <!--KNN MODEL FIT-->
         <div style="disyplay:block; ">
             <form action="/cockpit/KNN" method="POST">
@@ -70,10 +69,8 @@
                 <input type="submit" value="Get sparse!" onclick="$('#loading3').show();">
             </form>
             <div id="loading3" style="display:none;"><img src="static/loadingimage.gif" alt="" />...fitting the model...</div>
-        </div>
-            
+        </div>  
         <br>
-        
         <p>Continue with next step?</p>
         <form action="/recommender">
             <input type="submit" value="Yes, continue >>">

@@ -39,26 +39,33 @@ def main():
     def create_dataframe():
         _data_url = request.form["_data_url"] # Save dataset
         print("\nCreating dataframe from the following file: "+_data_url.split('/')[-4])
-        df, msg = rs.data_frame(_data_url)
-
         # Making df global because it is used in hole application
         # Sometimes not recommended, but here it brings much more
         # clarity since we are using only one dataframe for the
         # whole application
         global df
+        df, msg = rs.data_frame(_data_url)
 
         print(df.head())
         print("...saving dataframe as csv...\n...printing dataframe to HTML...")
         df.to_csv("program/data/df.csv", sep=',', index=False, encoding="utf-8")
         print("CSV file created.")
+
         return render_template('dataframe.html', msg=msg, data=df.head().to_html())
 
     @app.route("/cockpit/KNN", methods=['POST'])
-    def fit_KNN(df):
+    def fit_KNN():
         print("\n...Reading the dataframe as csv...")
         # df = pd.read_csv("program/data/df.csv", sep=',', encoding="utf-8")
         print(df.head())
-        msg = rs.data_KNN(df)
+        
+        # Same intuition as in df: since we are only using one
+        # data set at a time in this application, we will
+        # make the sparse matrix global for more clarity in the code.
+        global df_csr
+
+        print("...creating sparse matrix...")
+        df_csr, msg = rs.data_KNN(df)
 
         return render_template('KNN.html', msg=msg)
 
@@ -99,9 +106,9 @@ def main():
         
         if not error_prod:
             print("\n...loading dataframe...")
-            df = pd.read_csv("program/data/df.csv", sep=',', encoding="utf-8")
+            # df = pd.read_csv("program/data/df.csv", sep=',', encoding="utf-8")
             print("\n...loading sparse matrix...")
-            df_csr = load_npz("./program/data/df_csr.npz")
+            # df_csr = load_npz("./program/data/df_csr.npz")
 
             print("You chose the following product: {}".format(prod_id))
             print("\n...making recommendations...")

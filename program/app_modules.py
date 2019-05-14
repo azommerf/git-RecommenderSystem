@@ -197,7 +197,7 @@ def data_KNN(df):
 
         msg = "\nFitted the KNN model successfully."
 
-        return msg
+        return df_csr, msg
 
     except: 
 
