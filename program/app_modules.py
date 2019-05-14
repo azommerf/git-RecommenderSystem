@@ -8,6 +8,7 @@ import numpy as np # For sparse grid
 from scipy.sparse import csr_matrix, save_npz, load_npz # Sparse matrix
 from sklearn.neighbors import NearestNeighbors
 import pickle
+import webbrowser
 
 
 
@@ -174,8 +175,8 @@ def data_KNN(df):
         df_indexed.insert(0, "custIndex", df_custIndex)
 
 
-        # Create the sparse matrix based on a matrix with dimensions 
-        # (no. of unique products x no. of unique customres)
+        # Create the sparse matrix based on a matrix with dimensions:
+        # (no. of unique products x no. of unique customres).
         # Description from official scipy documentation:
         # csr_matrix((data, (row_ind, col_ind)), [shape=(M, N)])
         # where data, row_ind and col_ind satisfy the relationship a[row_ind[k], col_ind[k]] = data[k].
@@ -241,7 +242,7 @@ def data_reset(filetype):
         return msg
     else: return msg
 
-def data_recommender(metric, prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_csr):
+def data_recommender(algorithm, metric, prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_csr, df):
     try:
         # Now we look at an example product "prod"
 
@@ -259,19 +260,28 @@ def data_recommender(metric, prod_id, prodUnique_indexed, prodUnique_reverseInde
         NN_model.fit(df_csr)
         KNN = NN_model.kneighbors(prod_csr, no_recommendations) # Set number of suggestions
 
-        recommendations = np.array([])
+        recommendations = np.array([]) # For array with all recommended URLs
+        products = np.array([]) # For array with all recommended product IDs
+        total_stars = np.array([]) # For total number of stars per product
+        total_reviews = np.array([]) # For total number of reviews per product
         for i in KNN[1][0]:
             prod_id = prodUnique_reverseIndexed[i]
             prod_url = amazon_url+prod_id
             print(prod_url)
+            webbrowser.open_new_tab(prod_url)
+            total_stars = np.append(total_stars, df.loc[df['product_id'] == prod_id, 'star_rating'].sum())
+            total_reviews = np.append(total_reviews, len(df.loc[df['product_id'] == prod_id, 'star_rating']))
+            products = np.append(products, prod_id)
             recommendations = np.append(recommendations, prod_url)
 
-        msg = "These are the top {} recommendations based on product {} and {} distance metric.".format(no_recommendations-1, prod_id, metric)
+        msg = "These are the top {} recommendations:".format(no_recommendations-1, prod_id, metric)
         print("\n"+msg)
-        return recommendations, msg
+        return recommendations, total_stars, total_reviews, products, msg
     except:
         recommendations = np.array(["" "" "" "" "" ""])
+        total_stars = np.array(["" "" "" "" "" ""])
+        total_reviews = np.array(["" "" "" "" "" ""])
+        products = np.array(["" "" "" "" "" ""])
         msg = "\nUnfortunately this product ID was not found in the data base. Please search for another product ID."
         print(msg)
-        return recommendations, msg
-        
+        return recommendations, total_stars, total_reviews, products, msg

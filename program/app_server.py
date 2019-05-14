@@ -40,7 +40,13 @@ def main():
         _data_url = request.form["_data_url"] # Save dataset
         print("\nCreating dataframe from the following file: "+_data_url.split('/')[-4])
         df, msg = rs.data_frame(_data_url)
-        # session['df'] = df
+
+        # Making df global because it is used in hole application
+        # Sometimes not recommended, but here it brings much more
+        # clarity since we are using only one dataframe for the
+        # whole application
+        global df
+
         print(df.head())
         print("...saving dataframe as csv...\n...printing dataframe to HTML...")
         df.to_csv("program/data/df.csv", sep=',', index=False, encoding="utf-8")
@@ -48,9 +54,9 @@ def main():
         return render_template('dataframe.html', msg=msg, data=df.head().to_html())
 
     @app.route("/cockpit/KNN", methods=['POST'])
-    def fit_KNN():
+    def fit_KNN(df):
         print("\n...Reading the dataframe as csv...")
-        df = pd.read_csv("program/data/df.csv", sep=',', encoding="utf-8")
+        # df = pd.read_csv("program/data/df.csv", sep=',', encoding="utf-8")
         print(df.head())
         msg = rs.data_KNN(df)
 
@@ -75,7 +81,7 @@ def main():
     def recommend_prod():
         prod_id = request.form["_product_id"]
         metric = request.form["_metric"]
-        print("Metric: {}".format(metric))
+        algorithm = request.form["_algorithm"]
 
         # Load pickled variables needed
         print("\n...Loading pickled files...")
@@ -85,14 +91,36 @@ def main():
         with open("./program/data/prodUnique_reverseIndexed.pickle","rb") as pkl:
             prodUnique_reverseIndexed = pickle.load(pkl)
 
-        print("\n...loading csv file...")
-        df_csr = load_npz("./program/data/df_csr.npz")
-
-        print("You chose the following product: {}".format(prod_id))
-        print("\n...making recommendations...")
-        recommendations, msg = rs.data_recommender(metric, prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_csr)
+        try:
+            prodUnique_indexed[prod_id]
+            error_prod = False
+        except:  
+            error_prod = True 
         
-        return render_template('recommender2.html', recommendations=recommendations, msg=msg, metric=metric)
+        if not error_prod:
+            print("\n...loading dataframe...")
+            df = pd.read_csv("program/data/df.csv", sep=',', encoding="utf-8")
+            print("\n...loading sparse matrix...")
+            df_csr = load_npz("./program/data/df_csr.npz")
+
+            print("You chose the following product: {}".format(prod_id))
+            print("\n...making recommendations...")
+            recommendations, total_stars, total_reviews, products, msg = rs.data_recommender(algorithm, metric, prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_csr, df)
+            print("Recommendations: {}".format(recommendations))
+            print("Product IDs: {}".format(products))
+            print("Total number of stars: {}".format(total_stars))
+
+            return render_template('recommender2.html',\
+                                    recommendations=recommendations,\
+                                    msg=msg, prod_id=prod_id,\
+                                    metric=metric,\
+                                    algorithm=algorithm,\
+                                    total_stars=total_stars,\
+                                    total_reviews=total_reviews,\
+                                    products=products)
+        else:
+            msg = "\nUnfortunately this product ID was not found in the data base. Please search for another product ID."
+            return render_template('recommender3.html', msg=msg)
 
     app.run(port=port, debug=False)
     return app

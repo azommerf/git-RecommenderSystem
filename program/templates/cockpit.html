@@ -76,11 +76,12 @@
         
         <p>Continue with next step?</p>
         <form action="/recommender">
-            <input type="submit" value="Yes, go to recommender!">
+            <input type="submit" value="Yes, continue >>">
         </form>
+        <br>
         <div style="disyplay:block; ">
             <form action="/cockpit/reset" method="POST">
-                <input type="submit" value="No, reset everything!" onclick="$('#loading4').show();">
+                <input type="submit" value="<< No, reset everything!" onclick="$('#loading4').show();">
             </form>
             <div id="loading4" style="display:none;"><img src="static/loadingimage.gif" alt="" />...cleaning the garbage...</div>
         </div>

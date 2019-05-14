@@ -49,13 +49,34 @@
             neighbors model. Try out different parameters and see the recommendations. 
             Remember: you can always go back to the cockpit and restart with another data set.
         </p>
-        <form action="/recommender/2" method="POST">
-            Product ID: <input type="text" name="_product_id", placeholder="B003VWJ2K8">
-            <select name="_metric">
-                <option value="euclidean">Euclidean</option>
-                <option value="cosine">Cosine</option>
-            </select>
-            <input type="submit" value="Submit">
+        <div style="disyplay:block; "></div>
+            <form action="/recommender/2" method="POST">
+                Product ID: <input type="text" name="_product_id", placeholder="B003VWJ2K8"><br>
+                <label>Distance metric:</label>
+                <select name="_metric">
+                    <option value="euclidean">euclidean</option>
+                    <option value="cosine">cosine</option>
+                    <option value="minkowski">minkowski</option>
+                    <option value="cityblock">cityblock</option>
+                    <option value="‘l1">l1</option>
+                    <option value="‘l2">l2</option>
+                    <option value="manhattan">manhattan</option>
+                </select><br>
+                <label>Algorithm:</label>
+                <select name="_algorithm">
+                    <option value="auto">auto</option>
+                    <option value="ball_tree">ball_tree</option>
+                    <option value="kd_tree">kd_tree</option>
+                    <option value="brute">brute</option>
+                </select><br>
+                <br>
+                <input type="submit" value="Get recommendations >>" onclick="$('#loading5').show();">
+            </form>
+            <div id="loading5" style="display:none;"><img src="static/loadingimage.gif" alt="" />...making recommendations...</div>
+        </div>
+        <br>
+        <form action="/cockpit">
+            <input type="submit" value="<< Go back to cockpit">
         </form>
     </body>
 </html>

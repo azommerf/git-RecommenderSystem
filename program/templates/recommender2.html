@@ -24,39 +24,52 @@
             <a href = {{ url_for('cockpit') }}>Cockpit</a> / 
             <a href = {{ url_for('recommender') }}>Recommender System</a>
         </h1>
-        <!--INTRO TEXT-->
+        <p>Product:  {{prod_id}} </p>
+        <p>Distance metric:  {{metric}} </p>
+        <p>Algorithm:  {{algorithm}} </p>
+        <hr style="border: 0.5px solid black;" />
+        <p>{{ msg }}</p>
+        <p><b>Chosen product:</b><br></p>
         <p>
-            Now you can choose a product from the selected data set. 
-            From the following drop-down menu, click on the data set that you have chosen
-            and select the desired product from Amazon. When you are in the product page,
-            look at the URL and copy the product code that looks like this: "B00ESJDQ4Q".
+            Product ID: {{products[0]}}<br>
+            Total stars: {{total_stars[0]}}<br>
+            Total reviews: {{total_reviews[0]}}<br>
+            URL: <a href = {{ recommendations[0] }} target="_blank">{{ recommendations[0] }}</a>
         </p>
-        <!--SELECT PRODUCT IN AMAZON WEBPAGE-->
-        <form action="/recommender/1" method="POST">
-            <label>Select category:</label>
-            <select name="_amazon_url">
-                <option value="https://www.amazon.com/s/ref=lp_51575011_ex_n_1?rh=n%3A11091801&bbn=11091801&ie=UTF8&qid=1557755005">Musical Instruments</option>
-                <option value="https://www.amazon.com/s/ref=lp_3742441_ex_n_1?rh=n%3A2972638011&bbn=2972638011&ie=UTF8&qid=1557755163">Gardening</option>
-            </select>
-            <input type="submit" value="Go to Amazon">
+        <p><b>Recommended products:</b><br></p>
+        <p>
+            Product ID: {{products[1]}}<br>
+            Total stars: {{total_stars[1]}}<br>
+            Total reviews: {{total_reviews[1]}}<br>
+            URL: <a href = {{ recommendations[1] }} target="_blank">{{ recommendations[1] }}</a>
+        </p>
+        <p>
+            Product ID: {{products[2]}}<br>
+            Total stars: {{total_stars[2]}}<br>
+            Total reviews: {{total_reviews[2]}}<br>
+            URL: <a href = {{ recommendations[2] }} target="_blank">{{ recommendations[2] }}</a>
+        </p>
+        <p>
+            Product ID: {{products[3]}}<br>
+            Total stars: {{total_stars[3]}}<br>
+            Total reviews: {{total_reviews[3]}}<br>
+            URL: <a href = {{ recommendations[3] }} target="_blank">{{ recommendations[3] }}</a>
+        </p>
+        <p>
+            Product ID: {{products[4]}}<br>
+            Total stars: {{total_stars[4]}}<br>
+            Total reviews: {{total_reviews[4]}}<br>
+            URL: <a href = {{ recommendations[4] }} target="_blank">{{ recommendations[4] }}</a>
+        </p>
+        <p>
+            Product ID: {{products[5]}}<br>
+            Total stars: {{total_stars[5]}}<br>
+            Total reviews: {{total_reviews[5]}}<br>
+            URL: <a href = {{ recommendations[5] }} target="_blank">{{ recommendations[5] }}</a>
+        </p>
+        <form action="/recommender">
+            <input type="submit" value="<< Back to parameters">
         </form>
-        <br>
-        <!--INPUT SELECTED PRODUCT-->
-        <form action="/recommender/2" method="POST">
-            Product ID: <input type="text" name="_product_id", placeholder="B003VWJ2K8">
-            <select name="_metric">
-                <option value="euclidean">Euclidean</option>
-                <option value="cosine">Cosine</option>
-            </select>
-            <input type="submit" value="Submit">
-        </form>
-        <br>
-        <p>{{ msg }}:</p>
-        <p><a href = {{ recommendations[1] }} target="_blank">{{ recommendations[1] }}</a></p>
-        <p><a href = {{ recommendations[2] }} target="_blank">{{ recommendations[2] }}</a></p>
-        <p><a href = {{ recommendations[3] }} target="_blank">{{ recommendations[3] }}</a></p>
-        <p><a href = {{ recommendations[4] }} target="_blank">{{ recommendations[4] }}</a></p>
-        <p><a href = {{ recommendations[5] }} target="_blank">{{ recommendations[5] }}</a></p>
 
     </body>
 </html>
