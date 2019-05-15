@@ -27,11 +27,11 @@
         </h1>
         
         <!--DATA SET SELECTION-->
-        <p>{{ msg }}. Take a look at the first 5 entries:</p>
+        <p>{{ msg }}</p>
         <form action="/dockpit/dataframe" method="POST"></form>
         {{data | safe}}
         <form action="/cockpit">
-            <input type="submit" value="Continue with step 3">
+            <input type="submit" value={{button_msg}}>
         </form>
     </body>
 </html>

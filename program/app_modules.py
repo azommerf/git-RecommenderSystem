@@ -18,105 +18,62 @@ def data_download(url):
     #  Prepare the data set from Amazon
     # Choose category here: https://s3.amazonaws.com/amazon-reviews-pds/tsv/index.txt
 
-
-    # INSERT URL HERE
-
     filename = url.split('/')[-1]
     workingdir = os.path.abspath('')
     datadir = "program/data" # Directory where data is stored
     filepath_tsvgz = os.path.join(workingdir, datadir, filename)
     filepath_tsv = filepath_tsvgz[0:-3]
 
-
-    while True:
-        
-        # If download function should be callable with question, uncomment the following and comment out the lext line after the following.
-        #download_request = input("\nDo you want to prepare the following Amazon data set (can take a while if not downloaded): {}? [y]/[n] ".format(filename))
-        download_request = "y"
-        
-        print(filepath_tsvgz)
-
-
-        if download_request == "y":
-
-            def download_gz(url, filepath_tsvgz, filename):
-
-                filepath_tsv = filepath_tsvgz[0:-3]
-
-                # Check if data file already exists
-                exists_tsvgz = os.path.isfile(filepath_tsvgz)
-                if exists_tsvgz: print("\nFile already downloaded.")
-                else:
-                    print("\nFile does not exist. Continue with download process.")
-
-                    print("\n{:^50}".format("...downloading the data..."))
-
-                    # Retrieve data from URL
-                    r = requests.get(url, stream=True)
-                    total_length = r.headers.get('content-length')
-
-                    with open(filepath_tsvgz, 'wb') as f:
-                        # Show download progress bar
-                        if total_length is None:
-                            f.write(r.content)
-                        else:
-                            downloaded = 0
-                            total_length = int(total_length)
-                            for data in r.iter_content(chunk_size=max(int(total_length/1000), 1024*1024)):
-                                downloaded += len(data)
-                                f.write(data)
-                                done = int(50*downloaded/total_length)
-                                sys.stdout.write('\r[{}{}]'.format('█' * done, '.' * (50-done)))
-                                sys.stdout.flush()
-
-                    print("\nDownloaded "+filename+" successfully.")
-
-                # Unzip file  
-                print("\n\nunzipping the file...")
-                # zipped = gzip.GzipFile(filepath_tsvgz, 'rb')
-                # zipped_content = zipped.read()
-                # zipped.close()
-                # unzipped = open(filepath_tsv, 'wb')
-                # unzipped.write(zipped_content)
-                # unzipped.close()
-
-                with gzip.open(filepath_tsvgz, 'r') as f_in, open(filepath_tsv, 'wb') as f_out:
-                    shutil.copyfileobj(f_in, f_out)
-
-                print("\nFile decompressed successfully.")
-
-                # Delete zipped file
-                os.remove(filepath_tsvgz) # delete compressed data
-                print("Compressed file deleted successfully.")
-                print("File saved in the following location:\n{}".format(filepath_tsv))
-
-            exists_tsv = os.path.isfile(filepath_tsv)
-            # Execute download
-            if not exists_tsv:
-                download_gz(url, filepath_tsvgz, filename)
-                break
-            else: 
-                print("\nFile already exists. Continue with creating data frame. ")
-                break
-
+    def download_gz(url, filepath_tsvgz, filename):
+        filepath_tsv = filepath_tsvgz[0:-3]
+        # Check if data file already exists
+        exists_tsvgz = os.path.isfile(filepath_tsvgz)
+        if exists_tsvgz: print("\nFile already downloaded.")
         else:
-            print("\n...checking if data is downloaded...")
+            print("\nFile does not exist. Continue with download process.")
+            print("\n{:^50}".format("...downloading the data..."))
 
-            # Check if decompressed data file already exists
-            exists = os.path.isfile(filepath_tsv)
-            if exists:
-                print("\nFile already exists. Continue with creating data frame.")
-                break
-            else:
-                print("\nData file not found. Download the file to continue program.")
+            # Retrieve data from URL
+            r = requests.get(url, stream=True)
+            total_length = r.headers.get('content-length')
 
-    if os.path.isfile(filepath_tsv):
-        msg = "Data downloaded successfully (check data directory)."
+            with open(filepath_tsvgz, 'wb') as f:
+                # Show download progress bar
+                if total_length is None:
+                    f.write(r.content)
+                else:
+                    downloaded = 0
+                    total_length = int(total_length)
+                    for data in r.iter_content(chunk_size=max(int(total_length/1000), 1024*1024)):
+                        downloaded += len(data)
+                        f.write(data)
+                        done = int(50*downloaded/total_length)
+                        sys.stdout.write('\r[{}{}]'.format('█' * done, '.' * (50-done)))
+                        sys.stdout.flush()
+
+            print("\nDownloaded "+filename+" successfully.")
+
+        # # Unzip file  
+        # print("\n\nunzipping the file...")
+        # with gzip.open(filepath_tsvgz, 'r') as f_in, open(filepath_tsv, 'wb') as f_out:
+        #     shutil.copyfileobj(f_in, f_out)
+        # print("\nFile decompressed successfully.")
+        # # Delete zipped file
+        # os.remove(filepath_tsvgz) # delete compressed data
+        # print("Compressed file deleted successfully.")
+        # print("File saved in the following location:\n{}".format(filepath_tsv))
+
+    exists_tsvgz = os.path.isfile(filepath_tsvgz) # Check if data already exists
+    # Execute download
+    if not exists_tsvgz:
+        download_gz(url, filepath_tsvgz, filename)
+        msg = "Data downloaded successfully."
         return msg
-    else:
-        msg = "Something went wrong. Please try again or send a message to on of our hosts: andre.zommerfelds@unil.ch."
+    else: 
+        msg = "File already exists. Continue with creating data frame."
+        print(msg)
         return msg
-                
+
 def data_frame(url):
 
     #################################################################################
@@ -132,14 +89,30 @@ def data_frame(url):
         # Create pandas dataframe
         print()
         print("\n...creating dataframe...")
-        df = pd.read_csv(filepath_tsv, delimiter='\t', encoding="utf-8", error_bad_lines=False)
+        # df = pd.read_csv(filepath_tsv, delimiter='\t', encoding="utf-8", error_bad_lines=False)
 
-        msg = "Dataframe created successfully"
+        usecols = ['customer_id','product_id','star_rating',]
+        # dtype = {'star_rating':np.int32}
+        df = pd.read_csv(filepath_tsvgz,\
+                        delimiter='\t',\
+                        encoding="utf-8",\
+                        error_bad_lines=False,\
+                        compression='gzip',\
+                        # dtype=dtype,\
+                        usecols=usecols)
+        # Clean dataframe
+        df = df[df['star_rating'].isin([0,1,2,3,4,5])]
+        df.astype({'star_rating':int})
+
+        msg = "Dataframe created successfully. Take a look at the first 5 entries: "
+        err = False
+        return df, msg, err
 
     except:
-        msg = "Encountered an error while creating dataframe."
-
-    return df, msg
+        msg = "Encountered an error while creating dataframe. Please try to go through step 1 again."
+        df = ""
+        err = True
+        return df, msg, err
 
 
 def data_KNN(df):

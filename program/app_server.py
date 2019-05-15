@@ -16,9 +16,6 @@ def main():
     home_url = "http://127.0.0.1:{0}".format(port)
     threading.Timer(1.25, lambda: webbrowser.open(home_url) ).start()
 
-    def return_function(parameter):
-        return parameter
-
     @app.route("/")
     def home():
         return render_template('home.html')
@@ -39,19 +36,25 @@ def main():
     def create_dataframe():
         _data_url = request.form["_data_url"] # Save dataset
         print("\nCreating dataframe from the following file: "+_data_url.split('/')[-4])
+        
         # Making df global because it is used in hole application
         # Sometimes not recommended, but here it brings much more
         # clarity since we are using only one dataframe for the
         # whole application
         global df
-        df, msg = rs.data_frame(_data_url)
+        df, msg, err = rs.data_frame(_data_url)
 
-        print(df.head())
-        print("...saving dataframe as csv...\n...printing dataframe to HTML...")
-        df.to_csv("program/data/df.csv", sep=',', index=False, encoding="utf-8")
-        print("CSV file created.")
+        if not err:
+            print(df.head())
+            print("...saving dataframe as csv...\n...printing dataframe to HTML...")
+            df.to_csv("program/data/df.csv", sep=',', index=False, encoding="utf-8")
+            print("CSV file created.")
+            button_msg = "Continue with step 3"
 
-        return render_template('dataframe.html', msg=msg, data=df.head().to_html())
+            return render_template('dataframe.html', msg=msg, data=df.head().to_html(), button_msg=button_msg)
+        else:
+            button_msg = "Go back to cockpit"
+            return render_template('dataframe.html', msg=msg, data=df, button_msg=button_msg)
 
     @app.route("/cockpit/KNN", methods=['POST'])
     def fit_KNN():
@@ -105,13 +108,13 @@ def main():
             error_prod = True 
         
         if not error_prod:
-            print("\n...loading dataframe...")
+            print("...loading dataframe...")
             # df = pd.read_csv("program/data/df.csv", sep=',', encoding="utf-8")
-            print("\n...loading sparse matrix...")
+            print("...loading sparse matrix...")
             # df_csr = load_npz("./program/data/df_csr.npz")
 
             print("You chose the following product: {}".format(prod_id))
-            print("\n...making recommendations...")
+            print("...making recommendations...")
             recommendations, total_stars, total_reviews, products, msg = rs.data_recommender(algorithm, metric, prod_id, prodUnique_indexed, prodUnique_reverseIndexed, df_csr, df)
             print("Recommendations: {}".format(recommendations))
             print("Product IDs: {}".format(products))
