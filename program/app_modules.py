@@ -255,8 +255,8 @@ def data_recommender(algorithm, metric, prod_id, prodUnique_indexed, prodUnique_
 
         amazon_url = "https://www.amazon.com/dp/"
 
-        no_recommendations = 6
-        NN_model = NearestNeighbors(metric=metric)
+        no_recommendations = 16
+        NN_model = NearestNeighbors(metric=metric, algorithm=algorithm)
         NN_model.fit(df_csr)
         KNN = NN_model.kneighbors(prod_csr, no_recommendations) # Set number of suggestions
 
@@ -268,7 +268,7 @@ def data_recommender(algorithm, metric, prod_id, prodUnique_indexed, prodUnique_
             prod_id = prodUnique_reverseIndexed[i]
             prod_url = amazon_url+prod_id
             print(prod_url)
-            webbrowser.open_new_tab(prod_url)
+            # webbrowser.open_new_tab(prod_url) # If you want to automatically open new tabs
             total_stars = np.append(total_stars, df.loc[df['product_id'] == prod_id, 'star_rating'].sum())
             total_reviews = np.append(total_reviews, len(df.loc[df['product_id'] == prod_id, 'star_rating']))
             products = np.append(products, prod_id)
@@ -282,6 +282,6 @@ def data_recommender(algorithm, metric, prod_id, prodUnique_indexed, prodUnique_
         total_stars = np.array(["" "" "" "" "" ""])
         total_reviews = np.array(["" "" "" "" "" ""])
         products = np.array(["" "" "" "" "" ""])
-        msg = "\nUnfortunately this product ID was not found in the data base. Please search for another product ID."
+        msg = "\nUnfortunately we encountered an error using the chosen parameters. Please try another set-up."
         print(msg)
         return recommendations, total_stars, total_reviews, products, msg
