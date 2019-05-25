@@ -20,9 +20,9 @@ pip install -r ./requirements.txt
 
 Installing the program is just as easy as cloning the git repository into your local computer. After having the prerequisites installed, you go into the git-RecommenderSystem directory and run the following command.
 
-...
+```
 python -m program
-...
+```
 
 That's it! It might take 10 to 30 seconds to start the Flask web application.
 
