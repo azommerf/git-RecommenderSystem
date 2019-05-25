@@ -41,9 +41,9 @@ That's it! It might take 10 to 30 seconds to start the Flask web application.
 
 As stated before, from the git-RecommenderSystem directory on you can run the following command 
 to start the application.
-...
+```
 python -m program
-...
+```
 
 Your standard browser will automatically open a new tab with the web interface which directs 
 you to the home page. Now you can start the process of the recommender system. Please refer 
