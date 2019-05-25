@@ -16,14 +16,17 @@ def main():
     home_url = "http://127.0.0.1:{0}".format(port)
     threading.Timer(1.25, lambda: webbrowser.open(home_url) ).start()
 
+    # Home page
     @app.route("/")
     def home():
         return render_template('home.html')
 
+    # Cockpit page
     @app.route("/cockpit")
     def cockpit():
         return render_template('cockpit.html')
 
+    # Download page showing success/failure message of download
     @app.route("/cockpit/download", methods=['POST'])
     def choose_dataset():
         _data_url = request.form["_data_url"] # Save dataset
@@ -32,6 +35,7 @@ def main():
         print(_success_msg)
         return render_template('dataset.html', msg=_success_msg)
 
+    # DataFrame page showing if Pandas DataFrame creating was successful or not
     @app.route("/cockpit/dataframe", methods=['POST'])
     def create_dataframe():
         _data_url = request.form["_data_url"] # Save dataset
@@ -47,8 +51,8 @@ def main():
         if not err:
             print(df.head())
             print("...saving dataframe as csv...\n...printing dataframe to HTML...")
-            df.to_csv("program/data/df.csv", sep=',', index=False, encoding="utf-8")
-            print("CSV file created.")
+            # df.to_csv("program/data/df.csv", sep=',', index=False, encoding="utf-8")
+            # print("CSV file created.")
             button_msg = "Continue with step 3"
 
             return render_template('dataframe.html', msg=msg, data=df.head().to_html(), button_msg=button_msg)
@@ -56,6 +60,7 @@ def main():
             button_msg = "Go back to cockpit"
             return render_template('dataframe.html', msg=msg, data=df, button_msg=button_msg)
 
+    # KNN page showing if creating sparse matrix from DataFrame successfull or not
     @app.route("/cockpit/KNN", methods=['POST'])
     def fit_KNN():
         print("\n...Reading the dataframe as csv...")
@@ -64,13 +69,17 @@ def main():
         
         # Same intuition as in df: since we are only using one
         # data set at a time in this application, we will
-        # make the sparse matrix global for more clarity in the code.
+        # make the sparse matrix and the product indices
+        # global for more clarity in the code.
         global df_csr
+        global prodUnique_indexed
+        global prodUnique_reverseIndexed
 
         print("...creating sparse matrix...")
-        df_csr, msg = rs.data_KNN(df)
+        df_csr, msg, prodUnique_indexed, prodUnique_reverseIndexed = rs.data_KNN(df)
 
         return render_template('KNN.html', msg=msg)
+
 
     @app.route("/cockpit/reset", methods=['POST'])    
     def reset():
@@ -94,12 +103,12 @@ def main():
         algorithm = request.form["_algorithm"]
 
         # Load pickled variables needed
-        print("\n...Loading pickled files...")
-        with open("./program/data/prodUnique_indexed.pickle","rb") as pkl:
-            prodUnique_indexed = pickle.load(pkl)
+        # print("\n...Loading pickled files...")
+        # with open("./program/data/prodUnique_indexed.pickle","rb") as pkl:
+        #     prodUnique_indexed = pickle.load(pkl)
         
-        with open("./program/data/prodUnique_reverseIndexed.pickle","rb") as pkl:
-            prodUnique_reverseIndexed = pickle.load(pkl)
+        # with open("./program/data/prodUnique_reverseIndexed.pickle","rb") as pkl:
+        #     prodUnique_reverseIndexed = pickle.load(pkl)
 
         try:
             prodUnique_indexed[prod_id]
@@ -108,9 +117,9 @@ def main():
             error_prod = True 
         
         if not error_prod:
-            print("...loading dataframe...")
+            # print("...loading dataframe...")
             # df = pd.read_csv("program/data/df.csv", sep=',', encoding="utf-8")
-            print("...loading sparse matrix...")
+            # print("...loading sparse matrix...")
             # df_csr = load_npz("./program/data/df_csr.npz")
 
             print("You chose the following product: {}".format(prod_id))

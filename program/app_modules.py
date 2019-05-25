@@ -157,20 +157,20 @@ def data_KNN(df):
         print("...creating sparse matrix...")
         df_csr = csr_matrix((df_indexed["star_rating"], (prodIndex, custIndex)), shape=(prodNo, custNo))
 
-        print("...storing number of customers...")
-        with open("./program/data/custNo.pickle", "wb") as pkl:
-            pickle.dump(custNo, pkl, protocol=pickle.HIGHEST_PROTOCOL)
-        print("...storing indices...")
-        with open("./program/data/prodUnique_indexed.pickle", "wb") as pkl:
-            pickle.dump(prodUnique_indexed, pkl, protocol=pickle.HIGHEST_PROTOCOL)
-        with open("./program/data/prodUnique_reverseIndexed.pickle", "wb") as pkl:
-            pickle.dump(prodUnique_reverseIndexed, pkl, protocol=pickle.HIGHEST_PROTOCOL)
-        print("...storing sparse matrix...")
-        save_npz("./program/data/df_csr.npz", df_csr)
+        # print("...storing number of customers...")
+        # with open("./program/data/custNo.pickle", "wb") as pkl:
+        #     pickle.dump(custNo, pkl, protocol=pickle.HIGHEST_PROTOCOL)
+        # print("...storing indices...")
+        # with open("./program/data/prodUnique_indexed.pickle", "wb") as pkl:
+        #     pickle.dump(prodUnique_indexed, pkl, protocol=pickle.HIGHEST_PROTOCOL)
+        # with open("./program/data/prodUnique_reverseIndexed.pickle", "wb") as pkl:
+        #     pickle.dump(prodUnique_reverseIndexed, pkl, protocol=pickle.HIGHEST_PROTOCOL)
+        # print("...storing sparse matrix...")
+        # save_npz("./program/data/df_csr.npz", df_csr)
 
-        msg = "\nFitted the KNN model successfully."
+        msg = "\nPrepared the data for KNN model successfully."
 
-        return df_csr, msg
+        return df_csr, msg, prodUnique_indexed, prodUnique_reverseIndexed
 
     except: 
 
