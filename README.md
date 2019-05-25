@@ -1,4 +1,4 @@
-# git-RecommenderSystem - Abstract
+# git-RecommenderSystem
 
 This project deals with the question of how one can implement a simple recommender system for an e-commerce online shop. We investigate this question by building a two-sided interface: from one side, the business owner can adjust the model to fit the specific business situation and from the other side, the customer receives product recommendations for a chosen product. To show the practicality of this interface we follow in the footsteps of a manager who wants to make a simple recommender system for the the sales of Amazon products. Thus, we use the official Amazon product data set.
 
