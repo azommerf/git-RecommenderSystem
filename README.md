@@ -52,14 +52,22 @@ to start the application.
 python -m program
 ```
 
+### Starting the server application
 Your standard browser will automatically open a new tab with the web interface which directs 
 you to the home page. Now you can start the process of the recommender system. Please refer 
 to the flowchart inside the documentation folder to get a better understanding of what the 
-program is doing. From the home page you can click to the next page which will lead you to a 
-3-step process to prepare the recommender system. First, you download the selected database 
-(warning, this might take a few minutes - please check the download status at your terminal). 
-Second, you prepare the pandas DataFrame for further computations. Third, you convert this 
-DataFrame into a CSR matrix. Now you are ready to continue to the recommender algorithm in 
+program is doing. 
+
+### Preparing the data for the recommender
+From the home page you can click to the next page which will lead you to a 
+3-step process to prepare the recommender system:
+1. First, you download the selected database (warning, this might take a few minutes - 
+please check the download status at your terminal). 
+2. Second, you prepare the pandas DataFrame for further computations. 
+3. Third, you convert this DataFrame into a CSR matrix. 
+
+### Setting up the recommender and getting item suggestions
+Now you are ready to continue to the recommender algorithm in 
 the next page. Here you can set different KNN algorithms and change the underlying distance metric. 
 We find that the best results for the Amazon data set is given with algorithm set to 'auto' 
 along with a cosine distance metric. Test it for yourself! Finally, please watch the guidelines 
