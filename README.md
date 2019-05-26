@@ -8,6 +8,12 @@ recommendations for a chosen product. To show the practicality of this interface
 follow in the footsteps of a manager who wants to make a simple recommender system 
 for the the sales of Amazon products. Thus, we use the official Amazon product data set.
 
+## Introduction
+
+Within the repository you can find our report named "Recommender System - 
+Suggesting the Items Most Relevant to a Current Query.pdf". You can use this
+document not only as your manual but also to understand our intentions behind this project.
+
 ## Getting Started
 
 Use the following command to download the project.
@@ -62,8 +68,9 @@ often to the "product not identified" message). We are open for suggestions to m
 
 ## References
 
-Please check the documentation for the "Reference List.pdf" and "Project Report.pdf" for all 
-the references used for the development of the project.
+Please check the documentation for the "Reference list.pdf" and "Amazon Recommender System - 
+Suggesting the Items Most Relevant to a Current Query.pdf" for all the references used for 
+the development of the project.
 
 ## Authors
 
