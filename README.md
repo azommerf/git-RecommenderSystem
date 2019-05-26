@@ -10,9 +10,10 @@ for the the sales of Amazon products. Thus, we use the official Amazon product d
 
 ## Introduction
 
-Within the repository you can find our report named "Recommender System - 
-Suggesting the Items Most Relevant to a Current Query.pdf". You can use this
-document not only as your manual but also to understand our intentions behind this project.
+In the documentation folder inside the program directory you can find our report named 
+"Recommender System - Suggesting the Items Most Relevant to a Current Query.pdf". 
+You can use this document not only as your manual but also to understand our 
+intentions behind this project.
 
 ## Getting Started
 
